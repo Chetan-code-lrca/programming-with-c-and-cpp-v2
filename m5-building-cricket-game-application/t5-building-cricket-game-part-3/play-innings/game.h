@@ -30,5 +30,6 @@ class Game {
 		void startFirstInnings();
 		void initializePlayers();
 		void playInnings();
+		bool validateInningsScore();
 		void bat();
 };
