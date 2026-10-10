@@ -8,7 +8,7 @@ This repository contains source examples and selected solutions organized by cou
 - `m4-diving-into-cpp-programming/`
 - `m5-building-cricket-game-application/`
 
-The files are intended for learning, not as a single application. Some examples are standalone programs, some are partial teaching snippets, and some helper files are meant to be included from another source file.
+The files are intended for learning, not as a single application. Some examples are standalone programs, some are partial teaching snippets, some helper files are meant to be included from another source file, and C++ files named `start.cpp` are starter templates for completing the lesson.
 
 ## Requirements
 
@@ -34,7 +34,7 @@ Using `-fsyntax-only` checks syntax and declarations without linking or running 
 
 ## Automated checks
 
-GitHub Actions runs syntax checks on ordinary `.c` and `.cpp` examples and validates patch whitespace. Helper files that are intentionally incomplete or platform-specific may need individual handling rather than being silently excluded.
+GitHub Actions runs syntax checks on ordinary `.c` and `.cpp` examples and validates patch whitespace. Helper files, explicit `no-code` examples, and intentionally incomplete `start.cpp` templates are excluded from the syntax pass; those files are course prompts, not completed programs.
 
 ## Contribution notes
 
