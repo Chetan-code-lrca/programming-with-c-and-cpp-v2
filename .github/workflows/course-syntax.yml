@@ -19,11 +19,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - name: Install C and C++ compilers
         run: sudo apt-get update && sudo apt-get install -y build-essential
       - name: Check Bash helper syntax
         run: bash -n scripts/validate-examples.sh
       - name: Compile example source files
         run: bash scripts/validate-examples.sh
-      - name: Check patch whitespace
-        run: git diff --check
+      - name: Check committed patch whitespace
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          if [[ -n "$PR_BASE_SHA" ]]; then
+            git diff --check "$PR_BASE_SHA" "$GITHUB_SHA"
+          elif [[ -n "$PUSH_BEFORE_SHA" && ! "$PUSH_BEFORE_SHA" =~ ^0+$ ]]; then
+            git diff --check "$PUSH_BEFORE_SHA" "$GITHUB_SHA"
+          else
+            git diff-tree --check --root --no-commit-id -r "$GITHUB_SHA"
+          fi
