@@ -1,0 +1,29 @@
+name: Course Syntax Checks
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: course-syntax-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install C and C++ compilers
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+      - name: Check Bash helper syntax
+        run: bash -n scripts/validate-examples.sh
+      - name: Compile example source files
+        run: bash scripts/validate-examples.sh
+      - name: Check patch whitespace
+        run: git diff --check
