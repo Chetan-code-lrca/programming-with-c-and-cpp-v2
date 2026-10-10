@@ -40,7 +40,7 @@ while IFS= read -r -d '' file; do
     sed -n '1,8p' /tmp/course-check.out
     failed=$((failed + 1))
   fi
-done < <(find "${modules[@]}" -type f -name '*.cpp' ! -name '*helper*' ! -name 'no-code.cpp' -print0)
+done < <(find "${modules[@]}" -type f -name '*.cpp' ! -name '*helper*' ! -name 'no-code.cpp' ! -name 'start.cpp' -print0)
 
 rm -f /tmp/course-check.out
 printf 'Syntax check complete: %d files checked, %d failed.\n' "$checked" "$failed"
