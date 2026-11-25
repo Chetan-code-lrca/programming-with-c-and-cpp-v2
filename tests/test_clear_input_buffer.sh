@@ -17,16 +17,22 @@ grep -Fq 'F' "$tmp_dir/valid.out"
 grep -Fq '19' "$tmp_dir/valid.out"
 
 if printf 'Asha Rao\nnot-an-id\n' | "$binary" >"$tmp_dir/invalid.out" 2>"$tmp_dir/invalid.err"; then
-    echo 'Expected invalid ID input to fail.' >&2
+    echo 'Expected non-numeric ID input to fail.' >&2
     exit 1
 fi
 grep -Fq 'Invalid id.' "$tmp_dir/invalid.err"
 
-if printf 'Asha Rao\n42' | timeout 2s "$binary" >"$tmp_dir/eof.out" 2>"$tmp_dir/eof.err"; then
-    echo 'Expected EOF while clearing the ID line to fail.' >&2
+if printf 'Asha Rao\n999999999999999999999999999999\n' | "$binary" >"$tmp_dir/range.out" 2>"$tmp_dir/range.err"; then
+    echo 'Expected an out-of-range ID to fail.' >&2
     exit 1
 fi
-grep -Fq 'Unexpected end of input after id.' "$tmp_dir/eof.err"
+grep -Fq 'Invalid id.' "$tmp_dir/range.err"
+
+if printf 'Asha Rao\n42\nF\n-1\n' | "$binary" >"$tmp_dir/age.out" 2>"$tmp_dir/age.err"; then
+    echo 'Expected a negative age to fail.' >&2
+    exit 1
+fi
+grep -Fq 'Invalid age.' "$tmp_dir/age.err"
 
 long_name="$(printf '%040d' 0 | tr '0' 'A')"
 if printf '%s\n42\nF\n19\n' "$long_name" | "$binary" >"$tmp_dir/long.out" 2>"$tmp_dir/long.err"; then
@@ -35,4 +41,10 @@ if printf '%s\n42\nF\n19\n' "$long_name" | "$binary" >"$tmp_dir/long.out" 2>"$tm
 fi
 grep -Fq 'Name must contain' "$tmp_dir/long.err"
 
-echo 'Input-buffer regression tests passed (valid input, invalid ID, EOF, overlong name).'
+if printf '%050d' 0 | tr '0' 'A' | timeout 2s "$binary" >"$tmp_dir/eof.out" 2>"$tmp_dir/eof.err"; then
+    echo 'Expected an unterminated overlong name to fail.' >&2
+    exit 1
+fi
+grep -Fq 'Name must contain' "$tmp_dir/eof.err"
+
+echo 'Input-buffer regression tests passed (valid input, invalid/range ID, negative age, overlong name, EOF).'
