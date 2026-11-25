@@ -27,6 +27,8 @@ jobs:
         run: bash -n scripts/validate-examples.sh
       - name: Compile example source files
         run: bash scripts/validate-examples.sh
+      - name: Run input-buffer regression tests
+        run: bash tests/test_clear_input_buffer.sh
       - name: Check committed patch whitespace
         shell: bash
         env:
